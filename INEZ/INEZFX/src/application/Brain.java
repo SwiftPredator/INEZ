@@ -1,5 +1,8 @@
 package application;
-
+/**
+ * @author Paul Heinemeyer
+ * @version 1.0.0
+ */
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +32,12 @@ public class Brain implements BrainAPI {
 	private static Gson gson = new Gson();
 	
 	@Override
+	/**
+	 * Starts the Controller of the MVC and looks for the reference products, if there is no file containing them
+	 * the controller will start fetching them from the *Edeka* website.
+	 * @param void
+	 * @return void
+	 */
 	public void startBrain() {
 		String pathToReferenceList = FileSystems.getDefault().getPath(".").toAbsolutePath().toString()+"/products.txt";
 		File file = new File(pathToReferenceList);
@@ -57,10 +66,15 @@ public class Brain implements BrainAPI {
 	
 	@Override
 	//o(n^3) better solution?
+	/**
+	 * Calculates the Levenstein-Distance beetween the input String splitted by ' ' 
+	 * and all reference Product names splitted by ' '. With the distance the best fitting products are calculated
+	 * @param String input: the word which gets checked against the reference Products 
+	 * @return ArrayList that contains the best fitting products for the input String
+	 */
 	public ArrayList<Product> calculateSuggestions(String input) {
 		String[] sourceWords = input.split(" ");
-		Map<Integer, Integer> scores = new HashMap<>();
-		int index = 0;
+		ArrayList<Integer> scores = new ArrayList<Integer>();
 		for(Product product : edeka_products) {
 			String[] targetWords = product.getName().split(" ");
 			int minScore = 99999;
@@ -71,25 +85,37 @@ public class Brain implements BrainAPI {
 						minScore = leveScore;
 					}
 				}
-			scores.put(index, minScore);
+			scores.add(minScore);
 			}
-			index++;
+			
 		}
-		Stream<Map.Entry<Integer, Integer>> sorted =
-			    scores.entrySet().stream()
-			       .sorted(Map.Entry.comparingByValue());
+		ArrayList<Product> suggestions = new ArrayList<Product>();
+		/* Get best fitting products */
+		for(int i = 0; i < 6; i++) {
+			int curr_minScore = Collections.min(scores);
+			int curr_index = scores.indexOf(curr_minScore);
+			suggestions.add(edeka_products.get(curr_index + i));
+			scores.remove(curr_index);
+			
+		}
 		//System.out.println(Collections.min(scores));
 		//System.out.println(scores.indexOf(2));
 		//System.out.println(edeka_products.get(1380).getName());
-		System.out.println(sorted.toArray());
-		return null;
+		//System.out.println(sorted.toArray());
+		System.out.println(suggestions.get(0).getName());
+		//System.out.println(edeka_products.get(0));
+		return suggestions;
 	}
 	
     @Override
     public Product[] fetchShoppingList() {
     	return null;
     }
-    
+    /**
+     * setups the webclient(HtmlUnit) for scratching data
+     * @param void
+     * @return void
+     */
     private void setUpWebClient() {
     	//SETUP WEBCLIENT
         webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
@@ -100,7 +126,13 @@ public class Brain implements BrainAPI {
         webClient.getOptions().setTimeout(10000);
         webClient.getOptions().setUseInsecureSSL(true);
     }
-	
+	/**
+	 * Method goes to the edeka-product website and scratches all the links to the product-info sites for later use.
+	 * It iterates throught all pages and fetches the href fields with xPath @see edeka_XPATH_CONS.java
+	 * @param void 
+	 * @return ArrayList containing the DomAttributes of the href´s from the *edeka* website.
+	 * @throws IOException
+	 */
 	private ArrayList<DomAttr> getLinks() throws IOException {
 		//CATCH LINKS TO PRODUCTS
         final HtmlPage page = webClient.getPage("http://www.edeka.de/unsere-marken/suche-nach-edeka-produkten/suche-nach-edeka-produkten/sortimentkategorien.jsp");
@@ -134,7 +166,13 @@ public class Brain implements BrainAPI {
         	
         
 	}
-	
+	/**
+	 * Scratches the product-info sites from the Link-List and gets the product name, label and amount. 
+	 * It creates a new Product @see Product and saves it in a ArrayList.
+	 * @param links to the product-info sites scratched from @see getLinks()
+	 * @return ArrayList with the scratched Products
+	 * @throws Exception
+	 */
 	private ArrayList<Product> scratchProductInfo(ArrayList<DomAttr> links) throws Exception {
 		//FETCH PRODUCTS (O(n)) + fetch time 
  	   HtmlPage productPage;
@@ -166,7 +204,12 @@ public class Brain implements BrainAPI {
  		   throw e;
  	   }
 	}
-	
+	/**
+	 * 
+	 * @param data
+	 * @param sFileLoc
+	 * @throws Exception
+	 */
 	private void saveProducts(String data, String sFileLoc) throws Exception {
 		File file = new File(sFileLoc);
 		//System.out.println("Data" + data);
@@ -178,7 +221,7 @@ public class Brain implements BrainAPI {
 				}
 				file.createNewFile();
 			} catch (IOException e) {
-				log("Excepton Occured: " + e.toString());
+				throw e;
 			}
 		}
  
@@ -197,7 +240,12 @@ public class Brain implements BrainAPI {
 			throw e;
 		}
 	}
-	
+	/**
+	 * 
+	 * @param sFileLoc
+	 * @return
+	 * @throws Exception
+	 */
 	private ArrayList<Product> fetchSavedProducts(String sFileLoc) throws Exception {
 		File file = new File(sFileLoc);
 		if (!file.exists())
@@ -220,44 +268,46 @@ public class Brain implements BrainAPI {
 		
  
 	}
-	
+	/**
+	 * 
+	 * @param lhs
+	 * @param rhs
+	 * @return
+	 */
 	private int evaluateLevenshteinDistance (CharSequence lhs, CharSequence rhs) {                          
 	    int len0 = lhs.length() + 1;                                                     
 	    int len1 = rhs.length() + 1;                                                     
 	                                                                                    
-	    // the array of distances                                                       
+	                                                         
 	    int[] cost = new int[len0];                                                     
 	    int[] newcost = new int[len0];                                                  
 	                                                                                    
-	    // initial cost of skipping prefix in String s0                                 
+	                                    
 	    for (int i = 0; i < len0; i++) cost[i] = i;                                     
 	                                                                                    
-	    // dynamically computing the array of distances                                  
+	                                     
 	                                                                                    
-	    // transformation cost for each letter in s1                                    
+	                                    
 	    for (int j = 1; j < len1; j++) {                                                
-	        // initial cost of skipping prefix in String s1                             
+	                                    
 	        newcost[0] = j;                                                             
 	                                                                                    
-	        // transformation cost for each letter in s0                                
+	                                        
 	        for(int i = 1; i < len0; i++) {                                             
-	            // matching current letters in both strings                             
+	                                       
 	            int match = (lhs.charAt(i - 1) == rhs.charAt(j - 1)) ? 0 : 1;             
 	                                                                                    
-	            // computing cost for each transformation                               
+	                                           
 	            int cost_replace = cost[i - 1] + match;                                 
 	            int cost_insert  = cost[i] + 1;                                         
 	            int cost_delete  = newcost[i - 1] + 1;                                  
 	                                                                                    
-	            // keep minimum cost                                                    
+	                                                              
 	            newcost[i] = Math.min(Math.min(cost_insert, cost_delete), cost_replace);
 	        }                                                                           
 	                                                                                    
-	        // swap cost/newcost arrays                                                 
 	        int[] swap = cost; cost = newcost; newcost = swap;                          
 	    }                                                                               
-	                                                                                    
-	    // the distance is the cost for transforming all letters in both strings        
 	    return cost[len0 - 1];                                                          
 	}
  

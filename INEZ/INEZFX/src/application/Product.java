@@ -5,14 +5,17 @@ public class Product {
 	private String name;
 	private String amount;
 	private String label;
+	private String listName;
 	
     public Product(String name) {
         this.name = name;
+        this.listName = name;
     }
     public Product(String name, String label, String amount) {
     	this.name = name;
     	this.label = label;
     	this.amount = amount;
+    	this.listName = amount + " " + label + " " + name;
     }
     public String getName() {
         return name;
@@ -32,5 +35,9 @@ public class Product {
     
     public String getLabel() {
     	return label;
+    }
+    
+    public String getListName() {
+    	return listName;
     }
 }

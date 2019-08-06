@@ -44,7 +44,7 @@ public class Main extends Application {
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 products.add(new Product(textField.getText()));
-                brain.calculateSuggestions(textField.getText());
+                products.addAll(brain.calculateSuggestions(textField.getText()));
             }
         });
         final VBox vbox = new VBox();
@@ -74,7 +74,7 @@ public class Main extends Application {
         table.setEditable(true);
 
         TableColumn productCol = new TableColumn("Einkaufsliste");
-        productCol.setCellValueFactory(new PropertyValueFactory<Product,String>("name"));
+        productCol.setCellValueFactory(new PropertyValueFactory<Product,String>("listName"));
 
         table.getColumns().addAll(productCol);
         productCol.setMinWidth(minWith);
