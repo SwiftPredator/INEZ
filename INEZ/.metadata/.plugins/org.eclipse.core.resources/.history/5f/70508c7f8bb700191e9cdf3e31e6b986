@@ -1,0 +1,77 @@
+package application;
+
+import java.util.ArrayList;
+
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.*;
+
+public class Brain implements BrainAPI {
+	WebClient webClient;
+	Product[] edeka_products;
+	@Override
+	public void startBrain() {
+		setUpWebClient();
+		ArrayList<DomAttr> linkList = this.getLinks();
+		edeka_products = scratchProductInfo(linkList);
+	}
+	
+	@Override
+	public Product[] calculateSuggestions(String input) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+    @Override
+    public Product[] fetchShoppingList() {
+    	return null;
+    }
+    
+    private void setUpWebClient() {
+    	//SETUP WEBCLIENT
+        webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
+        webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setTimeout(10000);
+        webClient.getOptions().setUseInsecureSSL(true);
+    }
+	
+	private ArrayList<DomAttr> getLinks() {
+		//CATCH LINKS TO PRODUCTS
+        final HtmlPage page = webClient.getPage("http://www.edeka.de/unsere-marken/suche-nach-edeka-produkten/suche-nach-edeka-produkten/sortimentkategorien.jsp");
+        ArrayList<DomAttr> links = new ArrayList<DomAttr>();
+        HtmlAnchor getAllProducts_Button = page.getFirstByXPath(edeka_XPATH_CONS.SHOWALLPRODSBUTTON.toString());
+        System.out.println(getAllProducts_Button.asXml());
+        try {
+     	   HtmlPage sub = getAllProducts_Button.click();
+     	   webClient.waitForBackgroundJavaScript(1000);
+     	   DomText numProducts = sub.getFirstByXPath(edeka_XPATH_CONS.NUMPRODUCTS.toString());
+     	   System.out.println(numProducts);
+     	   HtmlAnchor nextButton = sub.getFirstByXPath(edeka_XPATH_CONS.NEXTBUTTON.toString());
+     	   String[] split = nextButton.getAttribute("style").split(":");
+    
+     	   while(!split[1].contentEquals("hidden")) {
+     		   log("fetch product cycle");
+     		   links.addAll(sub.getByXPath("//a[@class='title']/@href"));
+     		   sub = nextButton.click();
+     		   webClient.waitForBackgroundJavaScript(1000);
+     		   nextButton = sub.getFirstByXPath(edeka_XPATH_CONS.NEXTBUTTON.toString());
+     		   split = nextButton.getAttribute("style").split(" ");
+     		   split[1] = split[1].replace(" ", "").replace(";", "");
+     		   System.out.println(links.size());
+     		   break;
+     	   }
+     	   System.out.println(links);
+     	   return links;
+	}
+	
+	private Product[] scratchProductInfo(ArrayList<DomAttr> links) {
+		return null;
+	}
+
+	
+	
+
+}

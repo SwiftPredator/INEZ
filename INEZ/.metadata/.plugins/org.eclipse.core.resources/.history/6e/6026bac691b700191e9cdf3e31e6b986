@@ -1,0 +1,36 @@
+package application;
+import javafx.beans.property.SimpleStringProperty;
+
+public class Product {
+	private SimpleStringProperty name;
+	private SimpleStringProperty amount;
+	private SimpleStringProperty label;
+	
+    public Product(String name) {
+        this.name = new SimpleStringProperty(name);
+    }
+    public Product(String name, String label, String amount) {
+    	this.name = new SimpleStringProperty(name);
+    	this.label = new SimpleStringProperty(label);
+    	this.amount = new SimpleStringProperty(amount);
+    }
+    public String getName() {
+        return name.get();
+    }
+    
+    public void setAmount(String amount) {
+    	this.amount = new SimpleStringProperty(amount);
+    }
+    
+    public String getAmount() {
+    	return amount.get();
+    }
+    
+    public void setLabek(String label) {
+    	this.label = new SimpleStringProperty(label);
+    }
+    
+    public String getLabel() {
+    	return label.get();
+    }
+}

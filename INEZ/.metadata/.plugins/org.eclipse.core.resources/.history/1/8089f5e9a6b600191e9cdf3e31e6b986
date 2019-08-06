@@ -1,0 +1,10 @@
+package application;
+
+public enum edeka_XPATH_CONS {
+	SHOWALLPRODSBUTTON {
+		 public String toString() {
+	          return "//a[@class='button']";
+	      }
+	};
+	
+}
