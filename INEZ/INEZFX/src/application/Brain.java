@@ -4,10 +4,15 @@ package application;
  * @version 1.0.0
  */
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.net.URL;
 import java.nio.file.FileSystems;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
@@ -25,6 +31,20 @@ import com.gargoylesoftware.htmlunit.html.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+
+
+import opennlp.tools.cmdline.parser.ParserTool;
+import opennlp.tools.parser.Parse;
+import opennlp.tools.parser.Parser;
+import opennlp.tools.parser.ParserFactory;
+import opennlp.tools.parser.ParserModel;
+import opennlp.tools.postag.POSModel;
+import opennlp.tools.postag.POSTaggerME;
+import opennlp.tools.tokenize.TokenizerME;
+import opennlp.tools.tokenize.TokenizerModel;
+import opennlp.tools.tokenize.WhitespaceTokenizer;
+
+
 
 public class Brain implements BrainAPI {
 	WebClient webClient;
@@ -43,6 +63,7 @@ public class Brain implements BrainAPI {
 		File file = new File(pathToReferenceList);
 		if(file.exists()) {
 			try {
+				//tag("Fettarme H-Milch");
 				edeka_products = this.fetchSavedProducts(pathToReferenceList);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -54,6 +75,7 @@ public class Brain implements BrainAPI {
 				System.setErr(new PrintStream("/dev/null"));
 				ArrayList<DomAttr> linkList = this.getLinks();
 				edeka_products = this.scratchProductInfo(linkList);
+				System.out.println(linkList.size()+" : "+edeka_products.size());
 				String s = gson.toJson(edeka_products);
 				this.saveProducts(s, pathToReferenceList);
 			} catch (Exception e) {
@@ -74,38 +96,66 @@ public class Brain implements BrainAPI {
 	 */
 	public ArrayList<Product> calculateSuggestions(String input) {
 		String[] sourceWords = input.split(" ");
-		ArrayList<Integer> scores = new ArrayList<Integer>();
+		ArrayList<sortHelper> scores = new ArrayList<sortHelper>();
+		int index = 0;
 		for(Product product : edeka_products) {
 			String[] targetWords = product.getName().split(" ");
 			int minScore = 99999;
 			for(String s_Word : sourceWords) {
 				for(String t_Word : targetWords) {
-					int leveScore = evaluateLevenshteinDistance(s_Word, t_Word);
+					int leveScore = 999999;
+					leveScore = evaluateLevenshteinDistance(s_Word, t_Word);
+					if(t_Word.contains(s_Word)) {
+						leveScore -= 1;
+					} 
 					if(leveScore < minScore) {
 						minScore = leveScore;
 					}
 				}
-			scores.add(minScore);
 			}
+			scores.add(new sortHelper(index, minScore));
+			index++;
 			
 		}
+		
 		ArrayList<Product> suggestions = new ArrayList<Product>();
+		Collections.sort(scores);
+		
 		/* Get best fitting products */
-		for(int i = 0; i < 6; i++) {
-			int curr_minScore = Collections.min(scores);
-			int curr_index = scores.indexOf(curr_minScore);
-			suggestions.add(edeka_products.get(curr_index + i));
-			scores.remove(curr_index);
-			
+		ArrayList<sortHelper> newScores = new ArrayList<sortHelper>();
+		for(int i = 0; i < scores.size(); i++) {
+			if(scores.get(i).value < 2) {
+				try {
+					String[] tags = tag(edeka_products.get(scores.get(i).index).getName());
+					for(int j = 0; j < tags.length; j++) {
+						if(tags[j].contentEquals("NN")  /*|| tags[j].contentEquals("NE")*/) {
+							log("score rised");
+							scores.get(i).value += 3;
+						}
+						else if(tags[j].contentEquals("APPR")) {
+							log("score lowered");
+							scores.get(i).value -= 3;
+						}
+					}
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+				newScores.add(new sortHelper(scores.get(i).index, scores.get(i).value));
+			} 
 		}
-		//System.out.println(Collections.min(scores));
-		//System.out.println(scores.indexOf(2));
-		//System.out.println(edeka_products.get(1380).getName());
-		//System.out.println(sorted.toArray());
-		System.out.println(suggestions.get(0).getName());
-		//System.out.println(edeka_products.get(0));
+		System.out.println(newScores.size());
+		Collections.sort(newScores);
+		for(int i = 0; i < newScores.size(); i++) {
+			if(i == 4) {break;}
+			System.out.print(newScores.get(i).value + " : ");
+			Product temp_prod = edeka_products.get(newScores.get(i).index);
+			System.out.println(temp_prod.getName()); 
+			suggestions.add(temp_prod);
+		}
+		
 		return suggestions;
 	}
+	
 	
     @Override
     public Product[] fetchShoppingList() {
@@ -141,7 +191,7 @@ public class Brain implements BrainAPI {
         System.out.println(getAllProducts_Button.asXml());
         try {
      	   HtmlPage sub = getAllProducts_Button.click();
-     	   webClient.waitForBackgroundJavaScript(1000);
+     	   webClient.waitForBackgroundJavaScript(4000);
      	   DomText numProducts = sub.getFirstByXPath(edeka_XPATH_CONS.NUMPRODUCTS.toString());
      	   System.out.println(numProducts);
      	   HtmlAnchor nextButton = sub.getFirstByXPath(edeka_XPATH_CONS.NEXTBUTTON.toString());
@@ -151,7 +201,7 @@ public class Brain implements BrainAPI {
      		   log("fetch product cycle");
      		   links.addAll(sub.getByXPath("//a[@class='title']/@href"));
      		   sub = nextButton.click();
-     		   webClient.waitForBackgroundJavaScript(1000);
+     		   webClient.waitForBackgroundJavaScript(4000);
      		   nextButton = sub.getFirstByXPath(edeka_XPATH_CONS.NEXTBUTTON.toString());
      		   split = nextButton.getAttribute("style").split(" ");
      		   split[1] = split[1].replace(" ", "").replace(";", "");
@@ -179,10 +229,14 @@ public class Brain implements BrainAPI {
  	   ArrayList<Product> products = new ArrayList<Product>();
  	   try {
  		   int i = 0;
+ 		   ArrayList<String> finishedLinks = new ArrayList<String>();
 	 	   for(DomAttr link : links) {
+	 		   if(finishedLinks.contains(link.getValue())) {log("LINK REMOVED"); continue;}
+	 		   finishedLinks.add(link.getValue());
 	 		   System.out.print(i+"\n"); i++;
 	 		   String temp_link = link.getValue();
 	 		   productPage = webClient.getPage("http://www.edeka.de"+temp_link);
+	 		   //while(webClient.waitForBackgroundJavaScript(500) != 0) {}
 	 		   DomText name = productPage.getFirstByXPath("//span/span[@itemprop='name']/text()");
 	 		   String strName = "";
 	 		   if(name != null) {
@@ -193,11 +247,15 @@ public class Brain implements BrainAPI {
 	 		   if(label != null) {
 	 			   strLabel = label.toString();
 	 		   }
-	 		   String amount = productPage.getFirstByXPath("//p/b/text()").toString();
+	 		   DomText amount = productPage.getFirstByXPath("//p/b/text()");
+	 		   String strAmount = "";
+	 		   if(amount != null) {
+	 			   strAmount = amount.toString();
+	 		   }
 	 		   System.out.println(name);
 	 		   log(strLabel);
-	 		   log(amount);
-	 		   products.add(new Product(strName, strLabel, amount));
+	 		   log(strAmount);
+	 		   products.add(new Product(strName, strLabel, strAmount));
 	 	   }
 	 	   return products;
  	   } catch(Exception e) {
@@ -285,9 +343,6 @@ public class Brain implements BrainAPI {
 	                                    
 	    for (int i = 0; i < len0; i++) cost[i] = i;                                     
 	                                                                                    
-	                                     
-	                                                                                    
-	                                    
 	    for (int j = 1; j < len1; j++) {                                                
 	                                    
 	        newcost[0] = j;                                                             
@@ -315,6 +370,67 @@ public class Brain implements BrainAPI {
 		System.out.println(string);
 	}
 	
+	POSTaggerME tagger = null;
+    POSModel model = null;
+    
+	/**
+	 * 
+	 * @param lexiconFileName
+	 */
+	public void initialize(String lexiconFileName) {
+        try {
+            InputStream modelStream =  getClass().getResourceAsStream(lexiconFileName);
+            model = new POSModel(modelStream);
+            tagger = new POSTaggerME(model);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 	
+	/**
+	 * 
+	 * @param text
+	 */
+	public String[] tag(String text) throws Exception{
+        initialize("/de-pos-perceptron.bin");
+        try {
+            if (model != null) {
+                POSTaggerME tagger = new POSTaggerME(model);
+                if (tagger != null) {
+                    ArrayList<String> temp_whitespaceTokenizerLine = new ArrayList<String>(Arrays.asList(WhitespaceTokenizer.INSTANCE
+                            .tokenize(text)));
+                    /* for(int i = 0; i < temp_whitespaceTokenizerLine.size(); i++) {
+                    	 String token = temp_whitespaceTokenizerLine.get(i);
+                    	 if(checkIfOnlyUppercase(token)) {
+                    		 temp_whitespaceTokenizerLine.remove(token);
+                    	 }
+                     }  */
+                    String whitespaceTokenizerLine[] = new String[temp_whitespaceTokenizerLine.size()];
+                    whitespaceTokenizerLine = temp_whitespaceTokenizerLine.toArray(whitespaceTokenizerLine);
+                    String[] tags = tagger.tag(whitespaceTokenizerLine);
+                    for (int i = 0; i < whitespaceTokenizerLine.length; i++) {
+                        String word = whitespaceTokenizerLine[i].trim();
+                        String tag = tags[i].trim();
+                        System.out.print(tag + ":" + word + "  ");
+                    }
+                    return tags;
+                }
+            }
+            return null;
+        } catch (Exception e) {
+           throw e;
+        }
+    }
+	
+	private boolean checkIfOnlyUppercase(String str) {
+		for(int i = 0; i < str.length(); i++) {
+			char c = str.charAt(i);
+			if(c >= 97 && c <= 122) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 
 }

@@ -1,7 +1,0 @@
-package application;
-
-public interface BrainAPI {
-	public void startBrain(); 
-	public Product[] calculateSuggestions(String input);
-	public Product[] fetchShoppingList();
-}

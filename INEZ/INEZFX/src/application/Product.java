@@ -40,4 +40,8 @@ public class Product {
     public String getListName() {
     	return listName;
     }
+    
+    public void setListName(String name) {
+    	this.listName = name;
+    }
 }

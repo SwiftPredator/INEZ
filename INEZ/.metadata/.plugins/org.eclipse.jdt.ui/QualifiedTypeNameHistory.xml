@@ -2,7 +2,36 @@
 <qualifiedTypeNameHistroy>
     <fullyQualifiedTypeName name="javafx.application.Application"/>
     <fullyQualifiedTypeName name="com.gargoylesoftware.htmlunit.Page"/>
-    <fullyQualifiedTypeName name="com.sun.tools.javac.util.List"/>
     <fullyQualifiedTypeName name="com.gargoylesoftware.htmlunit.BrowserVersion"/>
     <fullyQualifiedTypeName name="java.lang.System"/>
+    <fullyQualifiedTypeName name="java.util.Set"/>
+    <fullyQualifiedTypeName name="java.util.HashSet"/>
+    <fullyQualifiedTypeName name="java.io.InputStream"/>
+    <fullyQualifiedTypeName name="opennlp.tools.tokenize.TokenizerModel"/>
+    <fullyQualifiedTypeName name="opennlp.tools.tokenize.TokenizerME"/>
+    <fullyQualifiedTypeName name="opennlp.tools.postag.POSTaggerME"/>
+    <fullyQualifiedTypeName name="opennlp.tools.postag.POSModel"/>
+    <fullyQualifiedTypeName name="opennlp.tools.tokenize.WhitespaceTokenizer"/>
+    <fullyQualifiedTypeName name="javafx.fxml.FXMLLoader"/>
+    <fullyQualifiedTypeName name="javafx.fxml.Initializable"/>
+    <fullyQualifiedTypeName name="javafx.fxml.FXML"/>
+    <fullyQualifiedTypeName name="java.util.ResourceBundle"/>
+    <fullyQualifiedTypeName name="javafx.event.ActionEvent"/>
+    <fullyQualifiedTypeName name="java.util.ArrayList"/>
+    <fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
+    <fullyQualifiedTypeName name="java.util.Arrays"/>
+    <fullyQualifiedTypeName name="java.lang.String"/>
+    <fullyQualifiedTypeName name="java.net.URL"/>
+    <fullyQualifiedTypeName name="org.languagetool.remote.RemoteResult"/>
+    <fullyQualifiedTypeName name="org.languagetool.language.BritishEnglish"/>
+    <fullyQualifiedTypeName name="org.languagetool.JLanguageTool"/>
+    <fullyQualifiedTypeName name="org.languagetool.rules.RuleMatch"/>
+    <fullyQualifiedTypeName name="com.sun.tools.javac.util.List"/>
+    <fullyQualifiedTypeName name="java.util.List"/>
+    <fullyQualifiedTypeName name="javafx.scene.input.MouseEvent"/>
+    <fullyQualifiedTypeName name="javafx.util.Callback"/>
+    <fullyQualifiedTypeName name="javax.imageio.ImageIO"/>
+    <fullyQualifiedTypeName name="javax.swing.ImageIcon"/>
+    <fullyQualifiedTypeName name="javafx.scene.image.Image"/>
+    <fullyQualifiedTypeName name="javafx.scene.image.ImageView"/>
 </qualifiedTypeNameHistroy>
