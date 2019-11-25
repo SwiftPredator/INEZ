@@ -17,7 +17,7 @@
     <RowConstraints maxHeight="914.0" minHeight="0.0" prefHeight="914.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0">
+      <TableView fx:id="tableView" onMouseClicked="#editListItem" prefHeight="200.0" prefWidth="200.0">
         <columns>
           <TableColumn fx:id="listProductCol" prefWidth="318.0" text="Einkaufsliste" />
             <TableColumn fx:id="listOptions" prefWidth="75.0" text="Optionen" />
@@ -36,12 +36,14 @@
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
-                  <Button fx:id="submitButton" layoutX="115.0" layoutY="298.0" mnemonicParsing="false" onAction="#addOnList" text="Auf Einkaufsliste packen" />
+                  <Button fx:id="submitButton" layoutX="115.0" layoutY="313.0" mnemonicParsing="false" onAction="#addOnList" text="Auf Einkaufsliste packen" />
                   <TextField fx:id="listInput" layoutX="116.0" layoutY="239.0" />
                   <CheckBox fx:id="showSuggsCheck" layoutX="14.0" layoutY="44.0" mnemonicParsing="false" selected="true" text="Vorschläge anzeigen" />
                   <Label layoutX="14.0" layoutY="14.0" text="Optionen" />
                   <CheckBox fx:id="autoAddAmountCheck" layoutX="14.0" layoutY="72.0" mnemonicParsing="false" text="Mengen automatisch ergänzen" />
                   <Button fx:id="editButton" layoutX="14.0" layoutY="385.0" mnemonicParsing="false" text="Einkaufsliste bearbeiten" />
+                  <ProgressIndicator fx:id="progressIndi" layoutX="174.0" layoutY="158.0" />
+                  <CheckBox fx:id="autoCorrectCheck" layoutX="14.0" layoutY="100.0" mnemonicParsing="false" text="Autokorrektur aktivieren" />
                </children>
             </AnchorPane>
         </items>
