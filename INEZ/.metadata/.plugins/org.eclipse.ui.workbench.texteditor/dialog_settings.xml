@@ -6,8 +6,11 @@
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
-		<item key="selection" value="Frische fettarme Milch"/>
+		<item key="selection" value="add"/>
 		<list key="findhistory">
+			<item value="add"/>
+			<item value="sortHelper"/>
+			<item value="clickItem"/>
 			<item value="Frische fettarme Milch"/>
 			<item value="H-Milch"/>
 		</list>
@@ -15,8 +18,8 @@
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item key="DIALOG_X_ORIGIN" value="234"/>
-		<item key="DIALOG_Y_ORIGIN" value="131"/>
+		<item key="DIALOG_X_ORIGIN" value="206"/>
+		<item key="DIALOG_Y_ORIGIN" value="536"/>
 		<item key="DIALOG_WIDTH" value="294"/>
 		<item key="DIALOG_HEIGHT" value="408"/>
 		<item key="DIALOG_FONT_NAME" value="1|.AppleSystemUIFont|11.0|0|COCOA|1|.AppleSystemUIFont"/>

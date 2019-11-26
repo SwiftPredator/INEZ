@@ -25,5 +25,5 @@ Erklärung zum Algorhitmus für die Produkt-Vorschläge:
     werden. Letztendlich ergeben sich die Ergebnisse aus dem Distanz-Algorhitmus und dem
     Wortart-Algorhitmus. 
     
-Bei Rückfragen, schreiben Sie mir gerne an paul_heinemeyer@outlook.de
+Bei Rückfragen, schreiben Sie mir gerne an paul_heinemeyer@outlook.de.
     

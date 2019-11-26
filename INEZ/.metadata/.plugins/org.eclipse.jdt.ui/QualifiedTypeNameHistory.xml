@@ -4,8 +4,6 @@
     <fullyQualifiedTypeName name="com.gargoylesoftware.htmlunit.Page"/>
     <fullyQualifiedTypeName name="com.gargoylesoftware.htmlunit.BrowserVersion"/>
     <fullyQualifiedTypeName name="java.lang.System"/>
-    <fullyQualifiedTypeName name="java.util.Set"/>
-    <fullyQualifiedTypeName name="java.util.HashSet"/>
     <fullyQualifiedTypeName name="java.io.InputStream"/>
     <fullyQualifiedTypeName name="opennlp.tools.tokenize.TokenizerModel"/>
     <fullyQualifiedTypeName name="opennlp.tools.tokenize.TokenizerME"/>
@@ -17,9 +15,7 @@
     <fullyQualifiedTypeName name="javafx.fxml.FXML"/>
     <fullyQualifiedTypeName name="java.util.ResourceBundle"/>
     <fullyQualifiedTypeName name="javafx.event.ActionEvent"/>
-    <fullyQualifiedTypeName name="java.util.ArrayList"/>
     <fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
-    <fullyQualifiedTypeName name="java.util.Arrays"/>
     <fullyQualifiedTypeName name="java.lang.String"/>
     <fullyQualifiedTypeName name="java.net.URL"/>
     <fullyQualifiedTypeName name="org.languagetool.remote.RemoteResult"/>
@@ -34,4 +30,25 @@
     <fullyQualifiedTypeName name="javax.swing.ImageIcon"/>
     <fullyQualifiedTypeName name="javafx.scene.image.Image"/>
     <fullyQualifiedTypeName name="javafx.scene.image.ImageView"/>
+    <fullyQualifiedTypeName name="javafx.stage.Popup"/>
+    <fullyQualifiedTypeName name="javafx.scene.shape.Circle"/>
+    <fullyQualifiedTypeName name="javafx.scene.paint.Color"/>
+    <fullyQualifiedTypeName name="java.util.Optional"/>
+    <fullyQualifiedTypeName name="java.util.NoSuchElementException"/>
+    <fullyQualifiedTypeName name="java.util.regex.Matcher"/>
+    <fullyQualifiedTypeName name="java.util.regex.Pattern"/>
+    <fullyQualifiedTypeName name="javafx.scene.control.Alert.AlertType"/>
+    <fullyQualifiedTypeName name="java.util.ArrayList"/>
+    <fullyQualifiedTypeName name="org.apache.commons.lang3.builder.EqualsBuilder"/>
+    <fullyQualifiedTypeName name="org.apache.lucene.search.spell.SpellChecker"/>
+    <fullyQualifiedTypeName name="org.apache.lucene.search.spell.PlainTextDictionary"/>
+    <fullyQualifiedTypeName name="org.apache.lucene.store.FSDirectory"/>
+    <fullyQualifiedTypeName name="java.nio.file.Paths"/>
+    <fullyQualifiedTypeName name="org.apache.lucene.store.Directory"/>
+    <fullyQualifiedTypeName name="org.apache.lucene.index.IndexWriterConfig"/>
+    <fullyQualifiedTypeName name="java.util.Set"/>
+    <fullyQualifiedTypeName name="java.util.HashSet"/>
+    <fullyQualifiedTypeName name="java.util.Arrays"/>
+    <fullyQualifiedTypeName name="impl.org.controlsfx.autocompletion.SuggestionProvider"/>
+    <fullyQualifiedTypeName name="impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding"/>
 </qualifiedTypeNameHistroy>
